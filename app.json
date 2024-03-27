@@ -23,6 +23,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "buildType": "apk",
       "package": "com.carlosmunoz2005.renotplus",
       "permissions": [
         "READ_EXTERNAL_STORAGE",
@@ -31,6 +32,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4e0791c8-931d-40c1-acbc-d9a1e348ff51"
+      }
     }
   }
 }

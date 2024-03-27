@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabase('database.db');
+const db = SQLite.openDatabase('data.db');
 
 export default function RegistrarPagos({ route }) {
   const [activity, setActivity] = useState('');
