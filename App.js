@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, Button } from 'react-native';
+import { Text, View, TouchableOpacity, Image } from 'react-native';  
 import * as SQLite from 'expo-sqlite'; 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,7 +10,9 @@ import ListaUsuarios from './src/ListaUsuarios';
 import Respaldo from './src/Respaldo';
 import 'react-native-gesture-handler';
 
-const db = SQLite.openDatabase('data.db');
+import { StyleSheet } from 'react-native';
+
+const db = SQLite.openDatabase('Data.db');
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -65,32 +67,33 @@ export default function App() {
         <Stack.Screen
           name="Main"
           component={MainScreen}
-          options={{ title: 'Menu principal' }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="ActividadesPagadas"
           component={ActividadesPagadas}
-          options={{title: 'Actividades'}}
+          options={{ headerShown: false }}
+          
         />
-        <Stack.Screen
-          name="RegistrarUsuarios"
-          component={RegistrarUsuarios}
-          options={{ title: 'Registro de usuarios' }}
-        />
+<Stack.Screen
+  name="RegistrarUsuarios"
+  component={RegistrarUsuarios}
+  options={{ headerShown: false }}
+/>
         <Stack.Screen
           name="ListaUsuarios"
           component={ListaUsuarios}
-          options={{ title: 'Lista de usuarios' }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="RegistrarPagos"
           component={RegistrarPagos}
-          options={{title: 'Registrar pagos'}}
+          options={{ headerShown: false }}
         />
         <Stack.Screen 
           name="Respaldo"
           component={Respaldo}
-          options={{title: 'Respaldo'}}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -99,20 +102,95 @@ export default function App() {
 
 function MainScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'start' }}>
-      <Text>¡Conexión a la base de datos SQLite exitosa!</Text>  
-      <Button
-        title='Registrar usuarios'
-        onPress={() => navigation.navigate('RegistrarUsuarios')}
-      />
-      <Button
-        title='Actividades'
-        onPress={() => navigation.navigate('ActividadesPagadas')}
-      />
-      <Button
-        title='Respaldo'
-        onPress={() => navigation.navigate('Respaldo')}
-      />
+    <View style={styles.mainScreenContainer}> 
+      <View style={styles.logoContainer}>
+        <Text style={styles.logoText}>RenotPlus</Text>
+        <View style={styles.logoDescriptionContainer}>  
+          <Text style={styles.logoDescription}>Gestor de pagos</Text>
+          <Image source={require('./assets/logo-iglesia.png')} style={styles.logoImage} />
+        </View>
+      </View>
+      <View style={styles.linkContainer}>
+        <TouchableOpacity
+          style={styles.link}
+          onPress={() => navigation.navigate('RegistrarUsuarios')}
+        >
+          <Text style={styles.linkText}>Usuarios</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.link}
+          onPress={() => navigation.navigate('ActividadesPagadas')}
+        >
+          <Text style={styles.linkText}>Actividades</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.link}
+          onPress={() => navigation.navigate('Respaldo')}
+        >
+          <Text style={styles.linkText}>Respaldo</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  mainScreenContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#423e67',
+    padding: 20,
+  },
+  logoContainer: {
+    width: '80%',
+    height: 140,
+    borderRadius: 20,
+    backgroundColor: '#e2b989',
+    padding: 20, 
+    marginBottom: 20,
+  },
+  logoDescriptionContainer: {
+    flexDirection: 'row', 
+    alignItems: 'center',  
+    justifyContent:'space-between',
+  },
+  logoImage: {
+    width: 50, 
+    height: 50,  
+    marginRight: 10,  
+    right: 0,
+  },
+  logoText: {
+    color: '#433e68',
+    fontSize: 28, 
+    marginBottom: 5,
+  },
+  logoDescription: {
+    marginTop: 20,
+    color: '#433e68',
+    fontSize: 15,
+  },
+  linkContainer: {
+    width: '80%',
+    height: 350,
+    borderRadius: 20,
+    marginTop: 70,
+    backgroundColor: '#322b53',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  link: {
+    width: '70%',
+    height: 40,
+    backgroundColor: '#e2b989',
+    borderRadius: 12,
+    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  linkText: {
+    color: '#322b53',
+    fontSize: 16,
+  },
+});

@@ -1,9 +1,9 @@
-// ListaUsuarios.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native'; 
+import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet } from 'react-native'; 
 import * as SQLite from 'expo-sqlite'; 
+const db = SQLite.openDatabase('Data.db');
 
-const db = SQLite.openDatabase('data.db');
+
 export default function ListaUsuarios({ navigation, route }) {
   const [usuarios, setUsuarios] = useState([]);
   const [filtro, setFiltro] = useState('');
@@ -13,8 +13,7 @@ export default function ListaUsuarios({ navigation, route }) {
       tx.executeSql(
         'SELECT * FROM Usuarios WHERE nombre LIKE ?',
         [`%${filtro}%`],
-        (_, { rows: { _array } }) => {
-          console.log('Usuarios filtrados:', _array);
+        (_, { rows: { _array } }) => { 
           setUsuarios(_array);
         },
         (_, error) => console.log('Error al ejecutar la consulta SQL:', error)
@@ -31,8 +30,9 @@ export default function ListaUsuarios({ navigation, route }) {
   };
 
   return (
-    <View>
+    <View style={styles.mainScreenContainer}>
       <TextInput
+        style={styles.input}
         placeholder="Filtrar usuarios..."
         value={filtro}
         onChangeText={setFiltro}
@@ -40,8 +40,8 @@ export default function ListaUsuarios({ navigation, route }) {
       <FlatList
         data={usuarios}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleUsuarioSeleccionado(item.id)}>
-            <Text>{item.nombre}</Text>
+          <TouchableOpacity style={styles.userItem} onPress={() => handleUsuarioSeleccionado(item.id)}>
+            <Text style={styles.userItemText}>{item.nombre}</Text>
           </TouchableOpacity>
         )}
         keyExtractor={item => item.id.toString()}
@@ -49,3 +49,36 @@ export default function ListaUsuarios({ navigation, route }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  mainScreenContainer: {
+    flex: 1,
+    paddingTop: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#423e67',
+    padding: 20,
+  },
+  input: {
+    width: '80%',
+    height: 40,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+  },
+  userItem: {
+    overflowY: 'scroll',
+    width: 300,
+    height: 40,
+    backgroundColor: '#e2b989',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  userItemText: {
+    color: '#433e68',
+    fontSize: 16,
+  },
+});

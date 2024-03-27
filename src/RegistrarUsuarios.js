@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, FlatList, TouchableOpacity, Modal, TextInput, Button, Alert } from 'react-native';
-import * as SQLite from 'expo-sqlite'; 
+import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import 'react-native-gesture-handler';
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabase('Data.db');
 
-
-const db = SQLite.openDatabase('data.db');
 export default function RegistrarUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [numeroUsuario, setNumeroUsuario] = useState('');
-  const [editandoUsuario, setEditandoUsuario] = useState(null);  
+  const [editandoUsuario, setEditandoUsuario] = useState(null);
 
   useEffect(() => {
     obtenerUsuarios();
@@ -41,7 +39,7 @@ export default function RegistrarUsuarios() {
         () => {
           console.log('Usuario agregado correctamente');
           setModalVisible(false);
-          obtenerUsuarios(); 
+          obtenerUsuarios();
           setNombreUsuario('');
           setNumeroUsuario('');
         },
@@ -52,8 +50,8 @@ export default function RegistrarUsuarios() {
     });
   };
 
-  const editarUsuario = (nombre, numero, id) => {  
-    setNombreUsuario(nombre); 
+  const editarUsuario = (nombre, numero, id) => {
+    setNombreUsuario(nombre);
     setNumeroUsuario(String(numero));
     setEditandoUsuario(id);
     setModalVisible(true);
@@ -68,7 +66,6 @@ export default function RegistrarUsuarios() {
           console.log('Usuario actualizado');
           setModalVisible(false);
           obtenerUsuarios();
-          // Restablecer los valores de los estados después de editar un usuario
           setNombreUsuario('');
           setNumeroUsuario('');
           setEditandoUsuario(null);
@@ -79,7 +76,6 @@ export default function RegistrarUsuarios() {
       );
     });
   };
-
 
   const borrarUsuario = (id, nombreUsuario) => {
     Alert.alert(
@@ -93,15 +89,13 @@ export default function RegistrarUsuarios() {
         {
           text: 'Borrar',
           onPress: () => {
-            // Implementa la lógica para borrar un usuario aquí
-            console.log('borrando', id)
             db.transaction(tx => {
               tx.executeSql(
                 'DELETE FROM Usuarios WHERE id = ?',
                 [id],
                 () => {
-                  console.log('Usuario eliminado correctamente',);
-                  obtenerUsuarios(); // Actualiza la lista de usuarios después de eliminar uno
+                  console.log('Usuario eliminado correctamente');
+                  obtenerUsuarios();
                 },
                 (_, error) => {
                   console.log('Error al eliminar usuario:', error);
@@ -115,35 +109,39 @@ export default function RegistrarUsuarios() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        data={usuarios}
-        keyExtractor={usuario => usuario.id.toString()}
-        renderItem={({ item }) => (
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
-            <View>
-              <Text>Nombre: {item.nombre}</Text>
-              <Text>Número: {item.numero}</Text>
+    <View style={styles.container}>
+      <View style={styles.listContainer}>
+        <FlatList
+          data={usuarios}
+          keyExtractor={usuario => usuario.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.itemContainer}>
+              <View style={styles.userInfoContainer}>
+                <View>
+                  <Text style={styles.text}>Nombre: {item.nombre}</Text>
+                  <Text style={styles.text}>Número: {item.numero}</Text>
+                </View>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity onPress={() => editarUsuario(item.nombre, item.numero, item.id)}>
+                    <Text style={styles.editButton}>Editar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => borrarUsuario(item.id, item.nombre)}>
+                    <Text style={styles.deleteButton}>Borrar</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-            <View style={{ flexDirection: 'row' }}>
-              <TouchableOpacity onPress={() => editarUsuario(item.nombre, item.numero, item.id)}>
-                <Text style={{ color: 'blue', marginRight: 10 }}>Editar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => borrarUsuario(item.id, item.nombre)}>
-                <Text style={{ color: 'red' }}>Borrar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      />
+          )}
+        />
+      </View>
       <TouchableOpacity
-        style={{ position: 'absolute', bottom: 20, right: 20, backgroundColor: 'blue', borderRadius: 30, padding: 10 }}
+        style={styles.addButton}
         onPress={() => {
-          setEditandoUsuario(null); // Reiniciar el estado de editandoUsuario al agregar un nuevo usuario
+          setEditandoUsuario(null);
           setModalVisible(true);
         }}
       >
-        <FontAwesome name="plus" size={24} color="white" />
+        <FontAwesome name="plus" size={24} color="#322b53" />
       </TouchableOpacity>
       <Modal
         animationType="slide"
@@ -151,23 +149,22 @@ export default function RegistrarUsuarios() {
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(false);
-          // Restablecer los valores de los estados si se cierra el modal
           setNombreUsuario('');
           setNumeroUsuario('');
           setEditandoUsuario(null);
         }}
       >
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-          <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, width: '80%' }}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
             <TextInput
               placeholder="Nombre"
-              style={{ marginBottom: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}
+              style={styles.input}
               value={nombreUsuario}
               onChangeText={setNombreUsuario}
             />
             <TextInput
               placeholder="Número"
-              style={{ marginBottom: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}
+              style={styles.input}
               value={numeroUsuario}
               onChangeText={setNumeroUsuario}
             />
@@ -179,3 +176,72 @@ export default function RegistrarUsuarios() {
   );
 }
 
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#423e67'
+  },
+  itemContainer: { 
+    overflowY: 'scroll',
+    borderRadius: 10,
+    width: '100%',
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginBottom: 3,
+  },
+  userInfoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',  
+    width: '100%', 
+    backgroundColor: '#e2b989',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+  },
+  buttonContainer: {  
+    flexDirection: 'row', 
+  },
+  editButton: {
+    color: '#322b53',
+    marginRight: 10
+  },
+  deleteButton: {
+    color: '#322b53',
+  },  
+  text: {
+    color: '#322b53',
+    paddingLeft: 5,
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%'
+  },
+  input: {
+    marginBottom: 10,
+    borderBottomWidth: 1,
+  }
+});
