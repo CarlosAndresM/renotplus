@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native'; 
 import * as SQLite from 'expo-sqlite'; 
 
-const db = SQLite.openDatabase('database.db');
+const db = SQLite.openDatabase('data.db');
 export default function ListaUsuarios({ navigation, route }) {
   const [usuarios, setUsuarios] = useState([]);
   const [filtro, setFiltro] = useState('');

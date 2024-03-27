@@ -10,43 +10,15 @@ import ListaUsuarios from './src/ListaUsuarios';
 import Respaldo from './src/Respaldo';
 import 'react-native-gesture-handler';
 
-
-
-const db = SQLite.openDatabase('database.db');
+const db = SQLite.openDatabase('data.db');
 const Stack = createStackNavigator();
 
-
-
-export default function App() {  
+export default function App() {
   const [tableCreated, setTableCreated] = useState(false); 
-  useEffect(() => {
 
+  useEffect(() => { 
 
     if (!tableCreated) {
-      // db.transaction(tx => {
-      //   tx.executeSql(
-      //     "DROP TABLE IF EXISTS Usuarios;",
-      //     [],
-      //     () => {
-      //       console.log('Tabla Usuarios eliminada correctamente');
-      //     },
-      //     (_, error) => {
-      //       console.log('Error al eliminar la tabla Usuarios:', error);
-      //     }
-      //   );
-      //   tx.executeSql(
-      //     "DROP TABLE IF EXISTS Actividades_Pagadas;",
-      //     [],
-      //     () => {
-      //       console.log('Tabla Actividades_Pagadas eliminada correctamente');
-      //     },
-      //     (_, error) => {
-      //       console.log('Error al eliminar la tabla Actividades_Pagadas:', error);
-      //     }
-      //   );
-      // });
-      
-   
       db.transaction(tx => {
         tx.executeSql(
           "CREATE TABLE IF NOT EXISTS Usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL, numero INTEGER NOT NULL);",
@@ -79,7 +51,13 @@ export default function App() {
       });
     }
   }, [tableCreated]);
-  
+
+  // Cerrar todas las transacciones al salir de la aplicación
+  useEffect(() => {
+    return () => {
+      db._db.close(); // Cierra la base de datos
+    };
+  }, []);
 
   return (
     <NavigationContainer>
@@ -105,14 +83,14 @@ export default function App() {
           options={{ title: 'Lista de usuarios' }}
         />
         <Stack.Screen
-        name="RegistrarPagos"
-        component={RegistrarPagos}
-        options={{title: 'Registrar pagos'}}
+          name="RegistrarPagos"
+          component={RegistrarPagos}
+          options={{title: 'Registrar pagos'}}
         />
         <Stack.Screen 
-        name="Respaldo"
-        component={Respaldo}
-        options={{title: 'Respaldo'}}
+          name="Respaldo"
+          component={Respaldo}
+          options={{title: 'Respaldo'}}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -127,12 +105,10 @@ function MainScreen({ navigation }) {
         title='Registrar usuarios'
         onPress={() => navigation.navigate('RegistrarUsuarios')}
       />
-
       <Button
         title='Actividades'
         onPress={() => navigation.navigate('ActividadesPagadas')}
       />
-
       <Button
         title='Respaldo'
         onPress={() => navigation.navigate('Respaldo')}

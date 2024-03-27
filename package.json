@@ -13,9 +13,13 @@
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
+    "exceljs": "^4.4.0",
     "expo": "~50.0.8",
     "expo-asset": "~9.0.2",
+    "expo-document-picker": "~11.10.1",
     "expo-file-system": "~16.0.8",
+    "expo-mail-composer": "~12.7.1",
+    "expo-permissions": "^14.4.0",
     "expo-router": "^3.4.8",
     "expo-sqlite": "^13.3.0",
     "expo-status-bar": "~1.11.1",
@@ -27,9 +31,7 @@
     "react-native-safe-area-context": "^4.9.0",
     "react-native-screens": "^3.29.0",
     "react-native-web": "~0.19.6",
-    "sqlite3": "^5.1.7",
-    "expo-mail-composer": "~12.7.1",
-    "expo-document-picker": "~11.10.1"
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

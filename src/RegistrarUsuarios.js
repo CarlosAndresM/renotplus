@@ -5,7 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import 'react-native-gesture-handler';
 
 
-const db = SQLite.openDatabase('database.db');
+const db = SQLite.openDatabase('data.db');
 export default function RegistrarUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
